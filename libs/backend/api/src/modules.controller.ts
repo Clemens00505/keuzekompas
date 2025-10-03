@@ -1,23 +1,39 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post, Query } from '@nestjs/common';
 import { ModulesService } from '@keuzekompas/application';
-import { InMemoryModulesRepo } from '@keuzekompas/infrastructure';
+import { CreateModuleDto } from './dto/create-module.dto';
+import { UpdateModuleDto } from './dto/update-module.dto';
 
 @Controller('modules')
 export class ModulesController {
-  private readonly service = new ModulesService(new InMemoryModulesRepo());
+  constructor(private readonly svc: ModulesService) {}
 
   @Get()
-  getAll() {
-    return this.service.list();
+  list(
+    @Query('q') q?: string,
+    @Query('ec') ec?: string,
+    @Query('niveau') niveau?: string,
+    @Query('thema') thema?: string,
+  ) {
+    return this.svc.list({
+      search: q,
+      ec: ec ? Number(ec) : undefined,
+      niveau,
+      thema,
+    });
   }
 
   @Get(':id')
-  getOne(@Param('id') id: string) {
-    return this.service.get(id);
+  get(@Param('id') id: string) {
+    return this.svc.get(id);
   }
 
   @Post()
-  create(@Body() dto: { name: string; ec: 15 | 30; niveau: 'NLQF-5' | 'NLQF-6'; thema?: string[] }) {
-    return this.service.create(dto);
+  create(@Body() dto: CreateModuleDto) {
+    return this.svc.create(dto);
+  }
+
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() dto: UpdateModuleDto) {
+    return this.svc.update(id, dto);
   }
 }

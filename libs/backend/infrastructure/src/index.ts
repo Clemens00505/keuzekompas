@@ -1,1 +1,2 @@
-export * from './inmemory-modules.repo';
+export * from './module.repo';
+export * from './schemas/module.schema';
