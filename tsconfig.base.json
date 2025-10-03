@@ -1,0 +1,33 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "rootDir": ".",
+    "sourceMap": true,
+    "declaration": false,
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "importHelpers": true,
+    "target": "es2015",
+    "module": "esnext",
+    "lib": ["es2020", "dom"],
+    "skipLibCheck": true,
+    "skipDefaultLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@keuzekompas/api-code": ["libs/backend/api/src/index.ts"],
+      "@keuzekompas/application": ["libs/backend/application/src/index.ts"],
+      "@keuzekompas/domain": ["libs/backend/domain/src/index.ts"],
+      "@keuzekompas/frontend-features-modules": [
+        "libs/frontend/features/src/index.ts"
+      ],
+      "@keuzekompas/frontend-ui": ["libs/frontend/ui/src/index.ts"],
+      "@keuzekompas/infrastructure": [
+        "libs/backend/infrastructure/src/index.ts"
+      ],
+      "@keuzekompas/types": ["libs/shared/types/src/index.ts"],
+      "@keuzekompas/utils": ["libs/shared/utils/src/index.ts"]
+    }
+  },
+  "exclude": ["node_modules", "tmp"]
+}

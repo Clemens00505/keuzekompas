@@ -1,0 +1,19 @@
+{
+  "name": "domain",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/backend/domain/src",
+  "projectType": "library",
+  "tags": [],
+  "targets": {
+    "build": {
+      "executor": "@nx/js:tsc",
+      "outputs": ["{options.outputPath}"],
+      "options": {
+        "outputPath": "dist/libs/backend/domain",
+        "main": "libs/backend/domain/src/index.ts",
+        "tsConfig": "libs/backend/domain/tsconfig.lib.json",
+        "assets": ["libs/backend/domain/*.md"]
+      }
+    }
+  }
+}
