@@ -29,18 +29,18 @@ export function NewModuleForm({ onCreated }: { onCreated: () => void }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-3">
-      <input name="name" placeholder="Naam" className="w-full" required />
+      <input name="name" placeholder="Naam" className="w-full" style={{ color: 'var(--text)' }} required />
       <div className="grid grid-cols-2 gap-3">
-        <select name="ec" defaultValue="15">
+        <select name="ec" defaultValue="15" style={{ color: 'var(--text)' }}>
           <option value="15">15 EC</option>
           <option value="30">30 EC</option>
         </select>
-        <select name="niveau" defaultValue="NLQF-5">
+        <select name="niveau" defaultValue="NLQF-5" style={{ color: 'var(--text)' }}>
           <option>NLQF-5</option>
           <option>NLQF-6</option>
         </select>
       </div>
-      <input name="thema" placeholder="Thema's (komma-gescheiden)" className="w-full" />
+      <input name="thema" placeholder="Thema's (komma-gescheiden)" className="w-full" style={{ color: 'var(--text)' }} />
       <button className="btn primary">Opslaan</button>
       {msg && <p className="text-sm">{msg}</p>}
     </form>
