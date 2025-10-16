@@ -6,6 +6,12 @@ import { useRouter } from 'next/navigation';
 
 export default function ModulesPage() {
   const router = useRouter();
+  // early guard: avoid running effects when not logged in
+  if (typeof window !== 'undefined' && !isLoggedIn()) {
+    // middleware will redirect on navigation; avoid loops by not pushing repeatedly
+    router.replace('/login?redirect=/modules');
+    return null;
+  }
   const [items, setItems] = useState<VKM[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [q, setQ] = useState('');
@@ -21,10 +27,6 @@ export default function ModulesPage() {
   }), [q, ec, niveau, thema]);
 
   useEffect(() => {
-    if (!isLoggedIn()) {
-      router.replace('/login');
-      return;
-    }
     const refresh = () => getModules(filters).then(setItems).catch(e => setError(String(e)));
     refresh();
   }, [router, filters]);
@@ -68,7 +70,7 @@ export default function ModulesPage() {
         <p className="text-red-600">Fout: {error}</p>
       ) : (
         <div className="card">
-          <ModuleList items={items} onDeleted={() => getModules(filters).then(setItems)} />
+          <ModuleList items={items} />
         </div>
       )}
     </section>

@@ -1,17 +1,19 @@
 'use client';
 import React, { useState } from 'react';
 import { loginRequest, setToken, isLoggedIn } from '@keuzekompas/frontend-features-modules';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 export default function LoginPage() {
   const router = useRouter();
+  const search = useSearchParams();
+  const redirect = search.get('redirect') || '/modules';
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   if (isLoggedIn()) {
-    router.replace('/modules');
+    router.replace(redirect);
     return null;
   }
 
@@ -22,7 +24,8 @@ export default function LoginPage() {
     try {
   const res = await loginRequest(email.trim().toLowerCase(), password.trim());
       setToken(res.accessToken);
-      router.replace('/modules');
+      // Ensure cookie is set before redirecting so middleware allows access
+      setTimeout(() => router.replace(redirect), 0);
     } catch (e: any) {
       setError(String(e?.message || e));
     } finally {

@@ -52,12 +52,3 @@ export async function createModule(payload: Omit<VKM, 'id'>): Promise<VKM> {
     thema: Array.isArray(m.thema) ? m.thema : [],
   };
 }
-
-export async function deleteModule(id: string): Promise<void> {
-  const token = getToken();
-  const res = await fetch(`${API_URL}/modules/${encodeURIComponent(id)}`, {
-    method: 'DELETE',
-    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-  });
-  if (!res.ok) throw new Error(await res.text());
-}

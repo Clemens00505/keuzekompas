@@ -30,6 +30,37 @@
 				"$tsc"
 			],
 			"group": "test"
+		},
+		{
+			"label": "Build web app",
+			"type": "shell",
+			"command": "npx nx build web",
+			"args": [],
+			"problemMatcher": [
+				"$tsc"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Serve web app",
+			"type": "shell",
+			"command": "npx nx serve web",
+			"args": [],
+			"isBackground": true,
+			"problemMatcher": [
+				"$tsc"
+			],
+			"group": "build"
+		},
+		{
+			"label": "Build web app (after middleware)",
+			"type": "shell",
+			"command": "npx nx build web",
+			"args": [],
+			"problemMatcher": [
+				"$tsc"
+			],
+			"group": "build"
 		}
 	]
 }
