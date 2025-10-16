@@ -132,14 +132,23 @@ html {
   tab-size: 4;
   scroll-behavior: smooth;
 }
-body { margin: 0; background: var(--bg); color: var(--text); }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  /* Layout: footer at bottom without sticky */
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+}
 h1, h2, body, .app-header, .app-footer, .card, .section, .btn, input, select, textarea {
   transition: background-color .35s ease, color .35s ease, border-color .35s ease, box-shadow .35s ease;
 }
 h1, h2, p, pre { margin: 0; }
 *, ::before, ::after { box-sizing: border-box; border: 0 solid currentColor; }
 a { color: inherit; text-decoration: none; }
-svg { display: block; vertical-align: middle; }
+svg { display: block; }
 pre {
   background-color: #374151; color: #e5e7eb;
   border-radius: 0.25rem; overflow: auto; padding: 0.5rem 0.75rem;
@@ -193,7 +202,11 @@ ul, ol { list-style: none; margin: 0; padding: 0; }
 }
 
 /* --- Main --------------------------------------------------------------- */
-.app-main { padding: 88px 0 3rem; } /* 64px header + marge */
+.app-main {
+  padding: 88px 0 3rem; /* 64px header + marge */
+  /* Take remaining height so footer is pushed to bottom when content is short */
+  flex: 1 0 auto;
+}
 @media (min-width: 768px) { .app-main { padding-top: 96px; } }
 
 /* --- Footer -------------------------------------------------------------- */

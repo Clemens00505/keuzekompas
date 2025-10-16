@@ -1,4 +1,5 @@
 import { getToken } from './auth-storage';
+import { apiFetch } from './http';
 const API_URL = 'http://localhost:3333';
 
 export type VKM = {
@@ -17,12 +18,10 @@ export async function getModules(filters?: { q?: string; ec?: 15|30; niveau?: 'N
   if (filters?.niveau) params.set('niveau', filters.niveau);
   if (filters?.thema) params.set('thema', filters.thema);
   const url = `${API_URL}/modules${params.toString() ? `?${params.toString()}` : ''}`;
-  const res = await fetch(url, {
+  const data = await apiFetch(url, {
     cache: 'no-store',
     headers: token ? { Authorization: `Bearer ${token}` } : undefined,
   });
-  if (!res.ok) throw new Error(await res.text());
-  const data = await res.json();
   return data.map((m: any) => ({
     id: m.id || m._id || m.idModule || crypto.randomUUID(),
     name: m.name,
@@ -34,12 +33,10 @@ export async function getModules(filters?: { q?: string; ec?: 15|30; niveau?: 'N
 
 export async function getModule(id: string): Promise<VKM> {
   const token = getToken();
-  const res = await fetch(`${API_URL}/modules/${encodeURIComponent(id)}`, {
+  const m = await apiFetch(`${API_URL}/modules/${encodeURIComponent(id)}`, {
     cache: 'no-store',
     headers: token ? { Authorization: `Bearer ${token}` } : undefined,
   });
-  if (!res.ok) throw new Error(await res.text());
-  const m = await res.json();
   return {
     id: m.id || m._id || id,
     name: m.name,
@@ -51,7 +48,7 @@ export async function getModule(id: string): Promise<VKM> {
 
 export async function createModule(payload: Omit<VKM, 'id'>): Promise<VKM> {
   const token = getToken();
-  const res = await fetch(`${API_URL}/modules`, {
+  const m = await apiFetch(`${API_URL}/modules`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -59,8 +56,6 @@ export async function createModule(payload: Omit<VKM, 'id'>): Promise<VKM> {
     },
     body: JSON.stringify(payload),
   });
-  if (!res.ok) throw new Error(await res.text());
-  const m = await res.json();
   return {
     id: m.id || m._id || crypto.randomUUID(),
     name: m.name,

@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect, useState } from 'react';
-import { isLoggedIn } from '@keuzekompas/frontend-features-modules';
+import { isLoggedIn, userMessage } from '@keuzekompas/frontend-features-modules';
 import { getMyProfile, updateMyProfile, type MyProfile } from '@keuzekompas/frontend-features-modules';
 import { useRouter } from 'next/navigation';
 
@@ -31,7 +31,7 @@ export default function ProfilePage() {
         setFirstName(data.firstName);
         setLastName(data.lastName);
       } catch (e: any) {
-        setError(String(e?.message || e));
+        setError(userMessage(e));
       } finally {
         setLoading(false);
       }
@@ -51,7 +51,7 @@ export default function ProfilePage() {
       setMe(updated);
       setSuccess('Profiel bijgewerkt');
     } catch (e: any) {
-      setError(String(e?.message || e));
+      setError(userMessage(e));
     } finally {
       setSaving(false);
     }

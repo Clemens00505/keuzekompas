@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect, useMemo, useState } from 'react';
-import { getModules, type VKM, isLoggedIn } from '@keuzekompas/frontend-features-modules';
+import { getModules, type VKM, isLoggedIn, userMessage } from '@keuzekompas/frontend-features-modules';
 import { ModuleList } from '@keuzekompas/frontend-ui';
 import { useRouter } from 'next/navigation';
 
@@ -27,7 +27,7 @@ export default function ModulesPage() {
   }), [q, ec, niveau, thema]);
 
   useEffect(() => {
-    const refresh = () => getModules(filters).then(setItems).catch(e => setError(String(e)));
+    const refresh = () => getModules(filters).then(setItems).catch(e => setError(userMessage(e)));
     refresh();
   }, [router, filters]);
 

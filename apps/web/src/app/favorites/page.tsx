@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect, useMemo, useState } from 'react';
-import { isLoggedIn, getFavorites, type Favorite, getModule, type VKM } from '@keuzekompas/frontend-features-modules';
+import { isLoggedIn, getFavorites, type Favorite, getModule, type VKM, userMessage } from '@keuzekompas/frontend-features-modules';
 import { ModuleList } from '@keuzekompas/frontend-ui';
 import { useRouter } from 'next/navigation';
 
@@ -28,7 +28,7 @@ export default function FavoritesPage() {
         );
         setModules(detail.filter(Boolean) as VKM[]);
       } catch (e: any) {
-        setError(String(e?.message || e));
+        setError(userMessage(e));
       } finally {
         setLoading(false);
       }

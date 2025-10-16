@@ -2,17 +2,20 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import type { VKM } from '@keuzekompas/frontend-features-modules';
 import { getFavorites, addFavorite, removeFavorite, type Favorite } from '@keuzekompas/frontend-features-modules';
+import { userMessage } from '@keuzekompas/frontend-features-modules';
 
 export function ModuleList({ items }: { items: VKM[] }) {
   const [favorites, setFavorites] = useState<Favorite[]>([]);
   const favSet = useMemo(() => new Set(favorites.map(f => f.moduleId)), [favorites]);
 
+  const [favError, setFavError] = useState<string | null>(null);
+
   useEffect(() => {
     let cancelled = false;
     getFavorites().then(list => {
       if (!cancelled) setFavorites(list);
-    }).catch(() => {
-      // stil falen; component blijft werken zonder favs
+    }).catch((e) => {
+      if (!cancelled) setFavError(userMessage(e));
     });
     return () => { cancelled = true; };
   }, []);
@@ -24,9 +27,10 @@ export function ModuleList({ items }: { items: VKM[] }) {
       setFavorites(prev => prev.filter(f => f.moduleId !== moduleId));
       try {
         await removeFavorite(moduleId);
-      } catch {
+      } catch (e) {
         // rollback
         setFavorites(prev => prev.concat({ _id: crypto.randomUUID(), userId: 'me', moduleId } as any));
+        alert(userMessage(e));
       }
     } else {
       // optimistic add
@@ -34,9 +38,10 @@ export function ModuleList({ items }: { items: VKM[] }) {
       try {
         const saved = await addFavorite(moduleId);
         setFavorites(prev => prev.filter(f => f.moduleId !== moduleId).concat(saved));
-      } catch {
+      } catch (e) {
         // rollback
         setFavorites(prev => prev.filter(f => f.moduleId !== moduleId));
+        alert(userMessage(e));
       }
     }
   }
@@ -45,6 +50,9 @@ export function ModuleList({ items }: { items: VKM[] }) {
 
   return (
     <ul className="space-y-2">
+      {favError && (
+        <li className="text-red-600">Favorieten konden niet geladen worden: {favError}</li>
+      )}
       {items.map((m) => {
         const themas = Array.isArray(m.thema)
           ? m.thema
