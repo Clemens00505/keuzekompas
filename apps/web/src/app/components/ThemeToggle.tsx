@@ -42,6 +42,11 @@ export function ThemeToggle({ className = '' }: { className?: string }) {
     setTheme(next);
     applyTheme(next);
     localStorage.setItem(STORAGE_KEY, next);
+    try {
+      // Also set cookie for SSR reading (1 year expiry)
+      const expires = new Date(Date.now() + 365*24*60*60*1000).toUTCString();
+      document.cookie = `kk-theme=${encodeURIComponent(next)}; expires=${expires}; path=/; samesite=lax`;
+    } catch {}
   }
 
   const label = isDark ? 'Lichte modus' : 'Donkere modus';

@@ -20,6 +20,17 @@
   /* zachte tinten afgeleid van primary (werkt in moderne browsers) */
   --primary-soft: color-mix(in srgb, var(--primary) 12%, white);
   --primary-soft-border: color-mix(in srgb, var(--primary) 30%, white);
+
+  /* spacing scale (4px base) */
+  --space-1: .25rem; /* 4px */
+  --space-2: .5rem;  /* 8px */
+  --space-3: .75rem; /* 12px */
+  --space-4: 1rem;   /* 16px */
+  --space-5: 1.25rem;/* 20px */
+  --space-6: 1.5rem; /* 24px */
+  --space-8: 2rem;   /* 32px */
+  --space-10: 2.5rem;/* 40px */
+  --space-12: 3rem;  /* 48px */
 }
 
 /* --- Design tokens dark mode -------------------------------------------------------- */
@@ -27,7 +38,7 @@
   --bg: #121212;
   --surface: #1e1e1e;
   --surface-2: #2a2a2a;
-  --surface-3: #333333;
+  --surface-3: #2a2a2a;
 
   --text: #e4e4e4;
   --muted: #9ca3af;
@@ -37,13 +48,24 @@
   --primary-600: #A00016;
 
   --ring: rgba(208, 2, 27, 0.4);
-  --border: #374151;
+  --border: #2b2b2b;
   --shadow: 0 10px 15px -3px rgba(0,0,0,0.4), 0 4px 6px -2px rgba(0,0,0,0.3);
   --radius: 10px;
 
   /* zachte tinten afgeleid van primary (werkt in moderne browsers) */
   --primary-soft: color-mix(in srgb, var(--primary) 12%, #121212);
   --primary-soft-border: color-mix(in srgb, var(--primary) 30%, #121212);
+
+  /* spacing scale mirrors light */
+  --space-1: .25rem;
+  --space-2: .5rem;
+  --space-3: .75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-12: 3rem;
 }
 
 /* Theme toggle (switch) */
@@ -162,7 +184,7 @@ ul, ol { list-style: none; margin: 0; padding: 0; }
   width: 100%;
   max-width: 960px;
   margin: 0 auto;
-  padding: 1.25rem;
+  padding: var(--space-5);
 }
 
 /* --- Header -------------------------------------------------------------- */
@@ -173,10 +195,11 @@ ul, ol { list-style: none; margin: 0; padding: 0; }
   box-shadow: 0 4px 16px rgba(0,0,0,.04);
 }
 .app-header:has(.btn) { transition: background-color .35s ease, box-shadow .35s ease; }
-:root[data-theme="dark"] .app-header { background: rgba(30,30,30,.85); box-shadow: 0 4px 16px rgba(0,0,0,.6); }
+:root[data-theme="dark"] .app-header { background: color-mix(in srgb, var(--surface) 90%, transparent); box-shadow: 0 4px 16px rgba(0,0,0,.6); }
 .app-header-inner {
   display: flex; align-items: center; justify-content: space-between;
   height: 64px;
+  gap: var(--space-3);
 }
 .brand {
   display: inline-flex; align-items: center; gap: .5rem;
@@ -189,12 +212,14 @@ ul, ol { list-style: none; margin: 0; padding: 0; }
 .nav { display: flex; gap: .25rem; align-items: center; }
 .nav a {
   color: var(--muted);
-  padding: .4rem .75rem;
+  padding: calc(var(--space-2) + 2px) var(--space-3);
   border-radius: 999px;
   line-height: 1;
   transition: background-color .2s, color .2s, box-shadow .2s;
 }
 .nav a:hover { background: var(--surface-3); color: var(--text); }
+.nav a:focus-visible { outline: none; box-shadow: 0 0 0 4px var(--ring); }
+:root[data-theme="dark"] .nav a:hover { background: var(--surface-3); color: var(--text); }
 .nav a.active {
   color: #fff;
   background: linear-gradient(180deg, var(--primary) 0%, var(--primary-600) 100%);
@@ -203,7 +228,7 @@ ul, ol { list-style: none; margin: 0; padding: 0; }
 
 /* --- Main --------------------------------------------------------------- */
 .app-main {
-  padding: 88px 0 3rem; /* 64px header + marge */
+  padding: 92px 0 var(--space-12); /* header + extra marge voor ademruimte */
   /* Take remaining height so footer is pushed to bottom when content is short */
   flex: 1 0 auto;
 }
@@ -221,7 +246,7 @@ ul, ol { list-style: none; margin: 0; padding: 0; }
 .app-footer .container {
   display: grid; gap: 1rem;
   grid-template-columns: 1fr;
-  padding-top: 1.25rem; padding-bottom: 1.25rem;
+  padding-top: var(--space-5); padding-bottom: var(--space-5);
 }
 .footer-meta {
   display: flex; align-items: center; justify-content: space-between;
@@ -230,7 +255,7 @@ ul, ol { list-style: none; margin: 0; padding: 0; }
 .footer-links { display: flex; gap: .75rem; flex-wrap: wrap; }
 .footer-links a {
   color: var(--muted);
-  padding: .25rem .5rem;
+  padding: var(--space-1) var(--space-2);
   border-radius: 8px;
 }
 .footer-links a:hover { color: var(--text); background: var(--surface-3); }
@@ -239,18 +264,19 @@ ul, ol { list-style: none; margin: 0; padding: 0; }
 
 /* --- Utilities ----------------------------------------------------------- */
 .mx-auto { margin-left: auto; margin-right: auto; }
-.space-y-2 > * + * { margin-top: .5rem; }
-.space-y-3 > * + * { margin-top: .75rem; }
-.space-y-6 > * + * { margin-top: 1.5rem; }
+.space-y-2 > * + * { margin-top: var(--space-2); }
+.space-y-3 > * + * { margin-top: var(--space-3); }
+.space-y-4 > * + * { margin-top: var(--space-4); }
+.space-y-6 > * + * { margin-top: var(--space-6); }
 .grid { display: grid; }
 .grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.gap-3 { gap: .75rem; }
-.p-2 { padding: .5rem; }
-.p-3 { padding: .75rem; }
-.p-4 { padding: 1rem; }
-.p-6 { padding: 1.5rem; }
-.px-4 { padding-left: 1rem; padding-right: 1rem; }
-.py-2 { padding-top: .5rem; padding-bottom: .5rem; }
+.gap-3 { gap: var(--space-3); }
+.p-2 { padding: var(--space-2); }
+.p-3 { padding: var(--space-3); }
+.p-4 { padding: var(--space-4); }
+.p-6 { padding: var(--space-6); }
+.px-4 { padding-left: var(--space-4); padding-right: var(--space-4); }
+.py-2 { padding-top: var(--space-2); padding-bottom: var(--space-2); }
 .rounded { border-radius: var(--radius); }
 .border { border: 1px solid var(--border); }
 .text-sm { font-size: .875rem; }
@@ -264,7 +290,7 @@ ul, ol { list-style: none; margin: 0; padding: 0; }
 /* --- Buttons ------------------------------------------------------------- */
 .btn {
   display: inline-flex; align-items: center; gap: .5rem;
-  height: 40px; padding: 0 .9rem;
+  height: 40px; padding: 0 var(--space-4);
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 999px;
@@ -272,6 +298,8 @@ ul, ol { list-style: none; margin: 0; padding: 0; }
   transition: background-color .2s, color .2s, border-color .2s, box-shadow .2s;
 }
 .btn:hover { background: var(--surface-2); }
+:root[data-theme="dark"] .btn { background: #2a2a2a; border-color: #3a3a3a; color: var(--text); }
+:root[data-theme="dark"] .btn:hover { background: #333333; }
 .btn.primary {
   background: var(--primary);
   border-color: var(--primary);
@@ -283,7 +311,7 @@ ul, ol { list-style: none; margin: 0; padding: 0; }
 
 /* --- Inputs -------------------------------------------------------------- */
 input, select, textarea {
-  height: 40px; padding: .5rem .75rem;
+  height: 40px; padding: var(--space-2) var(--space-3);
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
@@ -295,23 +323,31 @@ input:focus, select:focus, textarea:focus {
   border-color: var(--primary);
   box-shadow: 0 0 0 4px var(--ring);
 }
+:root[data-theme="dark"] input,
+:root[data-theme="dark"] select,
+:root[data-theme="dark"] textarea {
+  background: var(--surface);
+  border-color: var(--border);
+  color: var(--text);
+}
 
 /* --- Cards --------------------------------------------------------------- */
 .card {
   background: var(--surface);
-  border: 1px solid #e3e6ea;
-  border-radius: 12px;
-  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--space-4);
   box-shadow: 0 6px 14px rgba(0,0,0,.06);
 }
+:root[data-theme="dark"] .card { box-shadow: 0 6px 14px rgba(0,0,0,.7); }
 
 /* --- Section wrapper (bv. filterblok) ----------------------------------- */
 .section {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 14px;
+  border-radius: var(--radius);
   box-shadow: var(--shadow);
-  padding: 1rem;
+  padding: var(--space-5);
 }
 
 /* --- Filters grid -------------------------------------------------------- */
@@ -337,6 +373,9 @@ input:focus, select:focus, textarea:focus {
 .table th, .table td { padding: .75rem 1rem; border-bottom: 1px solid var(--border); }
 .table thead th { background: var(--surface-3); text-align: left; font-weight: 700; }
 .table tr:last-child td { border-bottom: 0; }
+:root[data-theme="dark"] .table { border-color: var(--border); }
+:root[data-theme="dark"] .table th, :root[data-theme="dark"] .table td { border-bottom-color: var(--border); }
+:root[data-theme="dark"] .table thead th { background: var(--surface-3); }
 
 /* --- Responsive tweaks --------------------------------------------------- */
 @media (min-width: 768px) {
