@@ -6,10 +6,6 @@ import { useRouter } from 'next/navigation';
 
 export default function ProfilePage() {
   const router = useRouter();
-  if (typeof window !== 'undefined' && !isLoggedIn()) {
-    router.replace('/login?redirect=/profile');
-    return null;
-  }
   const [me, setMe] = useState<MyProfile | null>(null);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
@@ -39,7 +35,7 @@ export default function ProfilePage() {
     run();
   }, [router]);
 
-  if (!isLoggedIn()) return null;
+  if (!isLoggedIn()) return <section className="max-w-xl mx-auto space-y-6"><div className="card">Laden...</div></section>;
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

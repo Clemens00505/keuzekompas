@@ -6,10 +6,7 @@ import { useRouter } from 'next/navigation';
 
 export default function FavoritesPage() {
   const router = useRouter();
-  if (typeof window !== 'undefined' && !isLoggedIn()) {
-    router.replace('/login?redirect=/favorites');
-    return null;
-  }
+  // Avoid hydration mismatch by not branching at render-time
 
   const [favs, setFavs] = useState<Favorite[]>([]);
   const [modules, setModules] = useState<VKM[]>([]);
@@ -20,6 +17,10 @@ export default function FavoritesPage() {
     const load = async () => {
       try {
         setLoading(true);
+        if (!isLoggedIn()) {
+          router.replace('/login?redirect=/favorites');
+          return;
+        }
         const favorites = await getFavorites();
         setFavs(favorites);
         // fetch module details in parallel (small n expected)

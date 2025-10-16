@@ -6,14 +6,9 @@ import { useRouter } from 'next/navigation';
 
 export default function ModulesPage() {
   const router = useRouter();
-  // early guard: avoid running effects when not logged in
-  if (typeof window !== 'undefined' && !isLoggedIn()) {
-    // middleware will redirect on navigation; avoid loops by not pushing repeatedly
-    router.replace('/login?redirect=/modules');
-    return null;
-  }
   const [items, setItems] = useState<VKM[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
   const [q, setQ] = useState('');
   const [ec, setEc] = useState<'15' | '30' | ''>('');
   const [niveau, setNiveau] = useState<'NLQF-5' | 'NLQF-6' | ''>('');
@@ -27,11 +22,26 @@ export default function ModulesPage() {
   }), [q, ec, niveau, thema]);
 
   useEffect(() => {
-    const refresh = () => getModules(filters).then(setItems).catch(e => setError(userMessage(e)));
+    let cancelled = false;
+    const refresh = async () => {
+      try {
+        setLoading(true);
+        if (!isLoggedIn()) {
+          router.replace('/login?redirect=/modules');
+          return;
+        }
+        const data = await getModules(filters);
+        if (!cancelled) setItems(data);
+        if (!cancelled) setError(null);
+      } catch (e) {
+        if (!cancelled) setError(userMessage(e));
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
     refresh();
+    return () => { cancelled = true; };
   }, [router, filters]);
-
-  if (!isLoggedIn()) return null;
 
   return (
     <section className="max-w-2xl mx-auto space-y-6">
@@ -66,7 +76,9 @@ export default function ModulesPage() {
         </div>
       </div>
 
-      {error ? (
+      {loading ? (
+        <div className="card">Laden...</div>
+      ) : error ? (
         <p className="text-red-600">Fout: {error}</p>
       ) : (
         <div className="card">
