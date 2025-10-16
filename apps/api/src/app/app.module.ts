@@ -2,10 +2,10 @@ import { Module, ValidationPipe } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 
-import { Module as ModuleModel, ModuleSchema, User, UserSchema } from '@keuzekompas/infrastructure';
-import { ModuleRepo, UserRepo } from '@keuzekompas/infrastructure';
-import { ModulesService, AuthService, UsersService } from '@keuzekompas/application';
-import { ModulesController, AuthController, ProfileController } from '@keuzekompas/api-code';
+import { Module as ModuleModel, ModuleSchema, User, UserSchema, Favorite, FavoriteSchema } from '@keuzekompas/infrastructure';
+import { ModuleRepo, UserRepo, FavoriteRepo } from '@keuzekompas/infrastructure';
+import { ModulesService, AuthService, UsersService, FavoritesService } from '@keuzekompas/application';
+import { ModulesController, AuthController, ProfileController, FavoritesController } from '@keuzekompas/api-code';
 import { JwtModule } from '@nestjs/jwt';
 import { sign } from 'crypto';
 import { APP_PIPE } from '@nestjs/core';
@@ -17,6 +17,7 @@ import { APP_PIPE } from '@nestjs/core';
     MongooseModule.forFeature([
       { name: ModuleModel.name, schema: ModuleSchema },
       { name: User.name, schema: UserSchema },
+      { name: Favorite.name, schema: FavoriteSchema },
     ]),
     JwtModule.register({
       global: true,
@@ -27,13 +28,16 @@ import { APP_PIPE } from '@nestjs/core';
   controllers: [
     ModulesController,
     AuthController,
-    ProfileController
+    ProfileController,
+    FavoritesController
   ],
   providers: [
     ModuleRepo, 
     ModulesService,
     AuthService,
     UsersService,
+    FavoriteRepo,
+    FavoritesService,
     UserRepo,
     { provide: APP_PIPE, useValue: new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }) },
   ],

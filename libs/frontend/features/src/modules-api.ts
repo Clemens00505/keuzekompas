@@ -32,6 +32,23 @@ export async function getModules(filters?: { q?: string; ec?: 15|30; niveau?: 'N
   }));
 }
 
+export async function getModule(id: string): Promise<VKM> {
+  const token = getToken();
+  const res = await fetch(`${API_URL}/modules/${encodeURIComponent(id)}`, {
+    cache: 'no-store',
+    headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+  });
+  if (!res.ok) throw new Error(await res.text());
+  const m = await res.json();
+  return {
+    id: m.id || m._id || id,
+    name: m.name,
+    ec: m.ec,
+    niveau: m.niveau,
+    thema: Array.isArray(m.thema) ? m.thema : [],
+  };
+}
+
 export async function createModule(payload: Omit<VKM, 'id'>): Promise<VKM> {
   const token = getToken();
   const res = await fetch(`${API_URL}/modules`, {

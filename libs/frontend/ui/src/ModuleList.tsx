@@ -1,7 +1,46 @@
 'use client';
+import React, { useEffect, useMemo, useState } from 'react';
 import type { VKM } from '@keuzekompas/frontend-features-modules';
+import { getFavorites, addFavorite, removeFavorite, type Favorite } from '@keuzekompas/frontend-features-modules';
 
 export function ModuleList({ items }: { items: VKM[] }) {
+  const [favorites, setFavorites] = useState<Favorite[]>([]);
+  const favSet = useMemo(() => new Set(favorites.map(f => f.moduleId)), [favorites]);
+
+  useEffect(() => {
+    let cancelled = false;
+    getFavorites().then(list => {
+      if (!cancelled) setFavorites(list);
+    }).catch(() => {
+      // stil falen; component blijft werken zonder favs
+    });
+    return () => { cancelled = true; };
+  }, []);
+
+  async function toggleFavorite(moduleId: string) {
+    const isFav = favSet.has(moduleId);
+    if (isFav) {
+      // optimistic update
+      setFavorites(prev => prev.filter(f => f.moduleId !== moduleId));
+      try {
+        await removeFavorite(moduleId);
+      } catch {
+        // rollback
+        setFavorites(prev => prev.concat({ _id: crypto.randomUUID(), userId: 'me', moduleId } as any));
+      }
+    } else {
+      // optimistic add
+      setFavorites(prev => prev.concat({ _id: crypto.randomUUID(), userId: 'me', moduleId } as any));
+      try {
+        const saved = await addFavorite(moduleId);
+        setFavorites(prev => prev.filter(f => f.moduleId !== moduleId).concat(saved));
+      } catch {
+        // rollback
+        setFavorites(prev => prev.filter(f => f.moduleId !== moduleId));
+      }
+    }
+  }
+
   if (!items?.length) return <p className="opacity-70">Geen modules gevonden.</p>;
 
   return (
@@ -22,7 +61,15 @@ export function ModuleList({ items }: { items: VKM[] }) {
           >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '.5rem' }}>
               <div className="font-semibold">{m.name}</div>
-              <div style={{ display: 'flex', gap: '.5rem' }} />
+              <div style={{ display: 'flex', gap: '.5rem' }}>
+                <button
+                  className="btn"
+                  title={favSet.has(m.id) ? 'Verwijder uit favorieten' : 'Voeg toe aan favorieten'}
+                  onClick={() => toggleFavorite(m.id)}
+                >
+                  {favSet.has(m.id) ? '★ Favoriet' : '☆ Favoriet'}
+                </button>
+              </div>
             </div>
             <div className="text-sm opacity-70">
               EC: {m.ec} • Niveau: {m.niveau}

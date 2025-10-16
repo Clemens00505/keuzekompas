@@ -39,6 +39,7 @@ export default function RootLayout({
             <nav className="nav">
               <a href="/" className="active">Home</a>
               <a href="/modules">Modules</a>
+              <a href="/favorites">Favorieten</a>
               <a href="/profile">Profiel</a>
               <NavAuth />
               <ThemeToggle />

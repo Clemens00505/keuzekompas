@@ -4,7 +4,7 @@ import { NextResponse, type NextRequest } from 'next/server';
 export function middleware(req: NextRequest) {
   const url = req.nextUrl;
   const pathname = url.pathname;
-  const protectedPaths = ['/modules', '/profile'];
+  const protectedPaths = ['/modules', '/profile', '/favorites'];
   const isProtected = protectedPaths.some(p => pathname === p || pathname.startsWith(p + '/'));
 
   if (!isProtected) {
@@ -24,5 +24,5 @@ export function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/modules/:path*', '/modules', '/profile/:path*', '/profile'],
+  matcher: ['/modules/:path*', '/modules', '/profile/:path*', '/profile', '/favorites/:path*', '/favorites'],
 };
