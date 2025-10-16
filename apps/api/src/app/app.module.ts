@@ -4,8 +4,8 @@ import { MongooseModule } from '@nestjs/mongoose';
 
 import { Module as ModuleModel, ModuleSchema, User, UserSchema } from '@keuzekompas/infrastructure';
 import { ModuleRepo, UserRepo } from '@keuzekompas/infrastructure';
-import { ModulesService, AuthService } from '@keuzekompas/application';
-import { ModulesController, AuthController } from '@keuzekompas/api-code';
+import { ModulesService, AuthService, UsersService } from '@keuzekompas/application';
+import { ModulesController, AuthController, ProfileController } from '@keuzekompas/api-code';
 import { JwtModule } from '@nestjs/jwt';
 import { sign } from 'crypto';
 import { APP_PIPE } from '@nestjs/core';
@@ -26,12 +26,14 @@ import { APP_PIPE } from '@nestjs/core';
   ],
   controllers: [
     ModulesController,
-    AuthController
+    AuthController,
+    ProfileController
   ],
   providers: [
     ModuleRepo, 
     ModulesService,
     AuthService,
+    UsersService,
     UserRepo,
     { provide: APP_PIPE, useValue: new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }) },
   ],
