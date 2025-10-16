@@ -17,12 +17,4 @@ export class ModuleRepo {
   get(id: string) {
     return this.model.findById(id).lean();
   }
-
-  create(dto: Partial<Module>) {
-    return this.model.create(dto);
-  }
-
-  update(id: string, dto: Partial<Module>) {
-    return this.model.findByIdAndUpdate(id, dto, { new: true, runValidators: true }).lean();
-  }
 }

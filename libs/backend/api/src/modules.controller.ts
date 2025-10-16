@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Patch, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
 import { ModulesService } from '@keuzekompas/application';
 import { CreateModuleDto } from './dto/create-module.dto';
 import { UpdateModuleDto } from './dto/update-module.dto';
@@ -25,15 +25,5 @@ export class ModulesController {
   @Get(':id')
   get(@Param('id') id: string) {
     return this.svc.get(id);
-  }
-
-  @Post()
-  create(@Body() dto: CreateModuleDto) {
-    return this.svc.create(dto);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() dto: UpdateModuleDto) {
-    return this.svc.update(id, dto);
   }
 }

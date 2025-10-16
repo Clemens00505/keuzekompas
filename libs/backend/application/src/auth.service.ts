@@ -11,15 +11,25 @@ export class AuthService {
   ) {}
 
   async login(email: string, password: string) {
+    console.log('[Auth] login start', { email });
     const user = await this.users.findByEmail(email);
-    if (!user) throw new UnauthorizedException('Ongeldige inlog');
+    if (!user) {
+      console.warn('[Auth] user not found', { email });
+      throw new UnauthorizedException('Ongeldige inlog');
+    }
 
     const ok = await bcrypt.compare(password, user.passwordHash);
-    if (!ok) throw new UnauthorizedException('Ongeldige inlog');
+    if (!ok) {
+      console.warn('[Auth] password mismatch', { email });
+      throw new UnauthorizedException('Ongeldige inlog');
+    }
+    console.log('[Auth] password valid', { email });
 
     // minimale user-claims
     const payload = { sub: String(user._id), email: user.email, sn: user.studentNumber };
     const accessToken = await this.jwt.signAsync(payload);
+
+  console.log('[Auth] token generated', { email });
 
     // wat je naar frontend terugstuurt (geen passwordHash)
     return {

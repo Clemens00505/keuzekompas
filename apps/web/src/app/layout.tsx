@@ -1,5 +1,8 @@
 import './global.css';
 import { ThemeToggle } from './components/ThemeToggle';
+import React from 'react';
+import { NavAuth } from './components/NavAuth';
+import Script from 'next/script';
 
 export const metadata = {
   title: 'Avans - Keuzekompas',
@@ -12,8 +15,22 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
+        {/* Apply stored theme ASAP to avoid flash of wrong theme */}
+        <Script id="apply-theme" strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `
+              try {
+                var t = localStorage.getItem('kk-theme');
+                if (!t && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                  t = 'dark';
+                }
+                if (t === 'dark') document.documentElement.setAttribute('data-theme','dark');
+              } catch (_) {}
+            `,
+          }}
+        />
       </head>
       <body>
   <header className="app-header">
@@ -22,6 +39,7 @@ export default function RootLayout({
             <nav className="nav">
               <a href="/" className="active">Home</a>
               <a href="/modules">Modules</a>
+              <NavAuth />
               <ThemeToggle />
             </nav>
           </div>

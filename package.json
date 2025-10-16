@@ -4,6 +4,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "pwsh -NoLogo -NoProfile -Command \"Start-Job { nx serve api } | Out-Null; Start-Sleep -Seconds 1; nx serve web\"",
+    "seed": "ts-node apps/api/src/app/seed.ts",
     "build-all": "nx run-many --target=build --all",
     "serve-all": "nx run-many --target=serve --all"
   },

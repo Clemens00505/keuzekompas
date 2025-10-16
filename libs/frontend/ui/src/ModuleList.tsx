@@ -1,7 +1,8 @@
 'use client';
 import type { VKM } from '@keuzekompas/frontend-features-modules';
+import { deleteModule } from '@keuzekompas/frontend-features-modules';
 
-export function ModuleList({ items }: { items: VKM[] }) {
+export function ModuleList({ items, onDeleted }: { items: VKM[]; onDeleted?: () => void }) {
   if (!items?.length) return <p className="opacity-70">Geen modules gevonden.</p>;
 
   return (
@@ -20,7 +21,26 @@ export function ModuleList({ items }: { items: VKM[] }) {
             className="border p-3 rounded"
             style={{ background: 'var(--surface)' }}
           >
-            <div className="font-semibold">{m.name}</div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '.5rem' }}>
+              <div className="font-semibold">{m.name}</div>
+              <div style={{ display: 'flex', gap: '.5rem' }}>
+                <button
+                  className="btn"
+                  title="Verwijderen"
+                  onClick={async () => {
+                    if (!confirm('Weet je zeker dat je deze module wil verwijderen?')) return;
+                    try {
+                      await deleteModule(m.id);
+                      onDeleted?.();
+                    } catch (e: any) {
+                      alert('Verwijderen mislukt: ' + (e?.message || String(e)));
+                    }
+                  }}
+                >
+                  Verwijderen
+                </button>
+              </div>
+            </div>
             <div className="text-sm opacity-70">
               EC: {m.ec} • Niveau: {m.niveau}
             </div>

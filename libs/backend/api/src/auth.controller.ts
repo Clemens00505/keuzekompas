@@ -9,6 +9,7 @@ export class AuthController {
   @Post('login')
   @HttpCode(200)
   login(@Body() dto: LoginDto) {
+    console.log('Login attempt for', dto.email);
     return this.auth.login(dto.email, dto.password);
   }
 }

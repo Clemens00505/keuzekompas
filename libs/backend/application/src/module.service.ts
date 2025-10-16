@@ -14,12 +14,4 @@ export class ModulesService {
     if (!m) throw new NotFoundException('Module not found');
     return m;
   }
-
-  create(dto: any) {
-    return this.repo.create(dto);
-  }
-
-  update(id: string, dto: any) {
-    return this.repo.update(id, dto);
-  }
 }
