@@ -1,8 +1,9 @@
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Favorite, FavoriteDocument } from './schemas/favorite.schema';
+import type { FavoritesRepository } from '@keuzekompas/domain';
 
-export class FavoriteRepo {
+export class FavoriteRepo implements FavoritesRepository {
   constructor(@InjectModel(Favorite.name) private model: Model<FavoriteDocument>) {}
 
   listByUser(userId: string) {

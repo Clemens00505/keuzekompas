@@ -1,5 +1,5 @@
 export default {
-  displayName: 'api-code',
+  displayName: 'interface',
   preset: '../../../jest.preset.js',
   testEnvironment: 'node',
   transform: {

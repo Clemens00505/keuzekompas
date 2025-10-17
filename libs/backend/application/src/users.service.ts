@@ -1,9 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { UserRepo } from '@keuzekompas/infrastructure';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import type { UsersRepository } from '@keuzekompas/domain';
+import { USERS_REPOSITORY } from '@keuzekompas/domain';
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly users: UserRepo) {}
+  constructor(@Inject(USERS_REPOSITORY) private readonly users: UsersRepository) {}
 
   async getById(id: string) {
     const user = await this.users.findById(id);

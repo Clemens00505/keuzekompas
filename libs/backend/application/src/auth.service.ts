@@ -1,12 +1,13 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { UserRepo } from '@keuzekompas/infrastructure';
+import { Inject, Injectable, UnauthorizedException } from '@nestjs/common';
+import type { UsersRepository } from '@keuzekompas/domain';
+import { USERS_REPOSITORY } from '@keuzekompas/domain';
 import * as bcrypt from 'bcryptjs';
 import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly users: UserRepo,
+    @Inject(USERS_REPOSITORY) private readonly users: UsersRepository,
     private readonly jwt: JwtService,
   ) {}
 

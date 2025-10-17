@@ -15,7 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@keuzekompas/api-code": ["libs/backend/api/src/index.ts"],
+      "@keuzekompas/interface": ["libs/backend/interface/src/index.ts"],
       "@keuzekompas/application": ["libs/backend/application/src/index.ts"],
       "@keuzekompas/domain": ["libs/backend/domain/src/index.ts"],
       "@keuzekompas/frontend-features-modules": [

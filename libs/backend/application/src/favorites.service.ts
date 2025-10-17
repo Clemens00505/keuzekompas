@@ -1,9 +1,13 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { FavoriteRepo, ModuleRepo } from '@keuzekompas/infrastructure';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import type { FavoritesRepository, ModulesRepository } from '@keuzekompas/domain';
+import { FAVORITES_REPOSITORY, MODULES_REPOSITORY } from '@keuzekompas/domain';
 
 @Injectable()
 export class FavoritesService {
-  constructor(private readonly favs: FavoriteRepo, private readonly modules: ModuleRepo) {}
+  constructor(
+    @Inject(FAVORITES_REPOSITORY) private readonly favs: FavoritesRepository,
+    @Inject(MODULES_REPOSITORY) private readonly modules: ModulesRepository,
+  ) {}
 
   list(userId: string) {
     return this.favs.listByUser(userId);

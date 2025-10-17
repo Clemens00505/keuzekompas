@@ -1,8 +1,9 @@
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Module, ModuleDocument } from './schemas/module.schema';
+import type { ModulesRepository } from '@keuzekompas/domain';
 
-export class ModuleRepo {
+export class ModuleRepo implements ModulesRepository {
   constructor(@InjectModel(Module.name) private model: Model<ModuleDocument>) {}
 
   list(q?: { search?: string; ec?: number; niveau?: string; thema?: string }) {

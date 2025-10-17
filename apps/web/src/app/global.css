@@ -184,8 +184,16 @@ ul, ol { list-style: none; margin: 0; padding: 0; }
   width: 100%;
   max-width: 960px;
   margin: 0 auto;
-  padding: var(--space-5);
+  /* Horizontal padding only to avoid stacking vertical spacing with sections */
+  padding-left: var(--space-4);
+  padding-right: var(--space-4);
 }
+/* Increase horizontal breathing room on larger screens */
+@media (min-width: 768px) {
+  .container { padding-left: var(--space-6); padding-right: var(--space-6); }
+}
+/* Header should not add vertical padding via container */
+.app-header .container { padding-top: 0; padding-bottom: 0; }
 
 /* --- Header -------------------------------------------------------------- */
 .app-header {
@@ -228,11 +236,12 @@ ul, ol { list-style: none; margin: 0; padding: 0; }
 
 /* --- Main --------------------------------------------------------------- */
 .app-main {
-  padding: 92px 0 var(--space-12); /* header + extra marge voor ademruimte */
+  /* Breathing room without relying on header height math */
+  padding: var(--space-6) 0 var(--space-12);
   /* Take remaining height so footer is pushed to bottom when content is short */
   flex: 1 0 auto;
 }
-@media (min-width: 768px) { .app-main { padding-top: 96px; } }
+@media (min-width: 768px) { .app-main { padding-top: var(--space-8); } }
 
 /* --- Footer -------------------------------------------------------------- */
 .app-footer {

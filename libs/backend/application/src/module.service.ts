@@ -1,9 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { ModuleRepo } from '@keuzekompas/infrastructure';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import type { ModulesRepository } from '@keuzekompas/domain';
+import { MODULES_REPOSITORY } from '@keuzekompas/domain';
 
 @Injectable()
 export class ModulesService {
-  constructor(private readonly repo: ModuleRepo) {}
+  constructor(@Inject(MODULES_REPOSITORY) private readonly repo: ModulesRepository) {}
 
   list(q?: { search?: string; ec?: number; niveau?: string; thema?: string }) {
     return this.repo.list(q);

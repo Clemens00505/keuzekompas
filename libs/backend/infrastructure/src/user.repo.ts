@@ -1,8 +1,9 @@
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User, UserDocument } from './schemas/user.schema';
+import type { UsersRepository } from '@keuzekompas/domain';
 
-export class UserRepo {
+export class UserRepo implements UsersRepository {
   constructor(@InjectModel(User.name) private model: Model<UserDocument>) {}
 
   findByEmail(email: string) {
