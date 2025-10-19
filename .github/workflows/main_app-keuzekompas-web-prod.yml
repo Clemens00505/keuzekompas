@@ -99,6 +99,9 @@ jobs:
             if [ -d "$DEPLOY_DIR/public" ]; then
               cp -R "$DEPLOY_DIR/public/." "$TMP_DIR/public/"
             fi
+            # Root bootstrap to satisfy Oryx default startup (node server.js)
+            echo "Creating bootstrap server.js at zip root to launch $SERVER_ENTRY"
+            echo "require('child_process').fork(require('path').join(__dirname, '$SERVER_ENTRY'))" > "$TMP_DIR/server.js"
             pushd "$TMP_DIR" >/dev/null
             zip -r "$ROOT/web-dist.zip" .
             popd >/dev/null
@@ -128,7 +131,7 @@ jobs:
           slot-name: 'Production'
           package: web-dist.zip
           type: zip
-          startup-command: 'node ${{ steps.package-web.outputs.server_entry }}'
+          startup-command: 'node server.js'
 
       - name: 'Wait before retry'
         if: ${{ steps.deploy-to-webapp-1.outcome == 'failure' }}
@@ -143,5 +146,5 @@ jobs:
           slot-name: 'Production'
           package: web-dist.zip
           type: zip
-          startup-command: 'node ${{ steps.package-web.outputs.server_entry }}'
+          startup-command: 'node server.js'
           
