@@ -48,6 +48,15 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: api-dist
+
+      - name: Show downloaded files (debug)
+        run: |
+          pwd
+          ls -la
+          echo "Contents of api-dist:" && ls -la api-dist
+
+      - name: Create deployment archive
+        run: zip -r api-dist.zip api-dist
       
       - name: Login to Azure
         uses: azure/login@v2
@@ -62,6 +71,6 @@ jobs:
         with:
           app-name: 'app-keuzekompas-api-prod'
           slot-name: 'Production'
-          package: api-dist
+          package: api-dist.zip
           startup-command: 'node main.js'
           
