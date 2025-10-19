@@ -98,12 +98,29 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_1814C76360C1493297C48C6A0E9DB5DA }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_5E6F5E5F11C44738B8FB4CD5E2EC99E9 }}
 
-      - name: 'Deploy to Azure Web App'
-        id: deploy-to-webapp
+      - name: 'Deploy to Azure Web App (attempt 1)'
+        id: deploy-to-webapp-1
+        continue-on-error: true
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'app-keuzekompas-web-prod'
           slot-name: 'Production'
           package: web-dist.zip
+          type: zip
+          startup-command: 'node server.js'
+
+      - name: 'Wait before retry'
+        if: ${{ steps.deploy-to-webapp-1.outcome == 'failure' }}
+        run: sleep 30
+
+      - name: 'Deploy to Azure Web App (attempt 2)'
+        if: ${{ steps.deploy-to-webapp-1.outcome == 'failure' }}
+        id: deploy-to-webapp-2
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: 'app-keuzekompas-web-prod'
+          slot-name: 'Production'
+          package: web-dist.zip
+          type: zip
           startup-command: 'node server.js'
           
