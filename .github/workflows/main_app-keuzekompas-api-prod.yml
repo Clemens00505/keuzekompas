@@ -82,6 +82,20 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_79F3942891504724AD818180A4A66283 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_066289EEA6AC40408704D2C1C268BA9A }}
 
+      - name: Ensure Node 20 runtime and startup command
+        uses: azure/CLI@v2
+        with:
+          azcliversion: 2.64.0
+          inlineScript: |
+            set -e
+            APP_NAME="app-keuzekompas-api-prod"
+            RG=$(az webapp show -n "$APP_NAME" --query resourceGroup -o tsv)
+            echo "Using resource group: $RG"
+            # Set Node stack to 20 LTS and startup command
+            az webapp config set -g "$RG" -n "$APP_NAME" --linux-fx-version "NODE|20-lts" --startup-file "node main.js"
+            # Also set Node version app setting for good measure
+            az webapp config appsettings set -g "$RG" -n "$APP_NAME" --settings WEBSITE_NODE_DEFAULT_VERSION=20
+
       - name: 'Deploy to Azure Web App'
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
