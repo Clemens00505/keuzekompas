@@ -48,6 +48,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: api-dist
+          path: api-dist
 
       - name: Show downloaded files (debug)
         run: |
@@ -56,7 +57,23 @@ jobs:
           echo "Contents of api-dist:" && ls -la api-dist
 
       - name: Create deployment archive
-        run: zip -r api-dist.zip api-dist
+        run: |
+          set -e
+          ROOT="$GITHUB_WORKSPACE"
+          DEPLOY_DIR="api-dist"
+          if [ -f "$DEPLOY_DIR/main.js" ]; then
+            echo "Using $DEPLOY_DIR as deploy root"
+          elif [ -f "$DEPLOY_DIR/dist/apps/api/main.js" ]; then
+            echo "Using $DEPLOY_DIR/dist/apps/api as deploy root"
+            DEPLOY_DIR="$DEPLOY_DIR/dist/apps/api"
+          else
+            echo "main.js not found at expected locations" >&2
+            ls -laR api-dist || true
+            exit 1
+          fi
+          pushd "$DEPLOY_DIR" >/dev/null
+          zip -r "$ROOT/api-dist.zip" .
+          popd >/dev/null
       
       - name: Login to Azure
         uses: azure/login@v2
