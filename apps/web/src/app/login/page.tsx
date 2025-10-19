@@ -1,12 +1,17 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, Suspense } from 'react'; // 👈 Importeer Suspense
 import { loginRequest, setToken, isLoggedIn } from '@keuzekompas/frontend-features-modules';
 import { useRouter, useSearchParams } from 'next/navigation';
 
-export default function LoginPage() {
+// ----------------------------------------------------
+// 1. Nieuwe component die de client-side logica bevat
+// ----------------------------------------------------
+function LoginContent() {
   const router = useRouter();
-  const search = useSearchParams();
+  // ⚠️ useSearchParams staat HIER veilig binnen de Suspense-grens
+  const search = useSearchParams(); 
   const redirect = search.get('redirect') || '/modules';
+  
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -22,7 +27,7 @@ export default function LoginPage() {
     setError(null);
     setLoading(true);
     try {
-  const res = await loginRequest(email.trim().toLowerCase(), password.trim());
+      const res = await loginRequest(email.trim().toLowerCase(), password.trim());
       setToken(res.accessToken);
       // Ensure cookie is set before redirecting so middleware allows access
       setTimeout(() => router.replace(redirect), 0);
@@ -67,5 +72,17 @@ export default function LoginPage() {
         </button>
       </form>
     </section>
+  );
+}
+
+// ----------------------------------------------------
+// 2. Hoofd export met de Suspense Wrapper
+// ----------------------------------------------------
+export default function LoginPage() {
+  return (
+    // De prerendering faalt op deze pagina, dus verpak de inhoud in Suspense
+    <Suspense fallback={<div>Laden...</div>}>
+      <LoginContent />
+    </Suspense>
   );
 }
