@@ -27,7 +27,18 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Inject NEXT_PUBLIC_API_URL for Web build (optional)
+        run: |
+          if [ -n "${{ secrets.NEXT_PUBLIC_API_URL }}" ]; then
+            echo "NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }}" > apps/web/.env.production
+            echo "Wrote apps/web/.env.production"
+          else
+            echo "NEXT_PUBLIC_API_URL secret not set; skipping .env injection"
+          fi
+
       - name: Build web (Nx)
+        env:
+          NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL }}
         run: npx nx build web --configuration=production
 
       - name: Upload artifact for deployment job
@@ -115,6 +126,13 @@ jobs:
             echo "server_entry=server.js" >> "$GITHUB_OUTPUT"
           fi
       
+      - name: Login to Azure
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_83588BC80EBC456295CA2C7DB7E0612C }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_1814C76360C1493297C48C6A0E9DB5DA }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_5E6F5E5F11C44738B8FB4CD5E2EC99E9 }}
+
       - name: Login to Azure
         uses: azure/login@v2
         with:
