@@ -6,6 +6,18 @@
   "tags": ["type:app-frontend", "scope:frontend"],
   "// targets": "to see all targets run: nx show project web --web",
   "targets": {
+    "build": {
+      "executor": "@nx/next:build",
+      "outputs": ["{workspaceRoot}/dist/apps/web"],
+      "options": {
+        "outputPath": "{workspaceRoot}/dist/apps/web"
+      },
+      "configurations": {
+        "production": {
+          "production": true
+        }
+      }
+    },
     "serve": {
       "executor": "@nx/next:server",
       "options": {

@@ -10,6 +10,8 @@ const nextConfig = {
   // Use this to set Nx-specific options
   // See: https://nx.dev/recipes/next/next-config-setup
   nx: {},
+  // Produce a standalone Node server for deployment
+  output: 'standalone',
 };
 
 const plugins = [
