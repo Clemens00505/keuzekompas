@@ -82,17 +82,17 @@ jobs:
           tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_79F3942891504724AD818180A4A66283 }}
           subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_066289EEA6AC40408704D2C1C268BA9A }}
 
-      - name: Ensure Node 20 runtime and startup command
+      - name: Ensure Node 20 runtime and startup command (optional)
         uses: azure/CLI@v2
         with:
-          azcliversion: 2.64.0
+          azcliversion: latest
           inlineScript: |
             set -e
             APP_NAME="app-keuzekompas-api-prod"
-            RG=$(az webapp list --query "[?name=='$APP_NAME'] | [0].resourceGroup" -o tsv)
+            RG="${{ vars.AZURE_RESOURCE_GROUP }}"
             if [ -z "$RG" ]; then
-              echo "Could not determine resource group for $APP_NAME" >&2
-              exit 1
+              echo "AZURE_RESOURCE_GROUP not set; skipping runtime configuration."
+              exit 0
             fi
             echo "Using resource group: $RG"
             # Set Node stack to 20 LTS
