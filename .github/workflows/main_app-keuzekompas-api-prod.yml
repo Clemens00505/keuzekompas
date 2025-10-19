@@ -30,9 +30,6 @@ jobs:
       - name: Build API (Nx)
         run: npx nx build api
 
-      - name: Prune API lockfile and workspace modules
-        run: npx nx run api:prune
-
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
