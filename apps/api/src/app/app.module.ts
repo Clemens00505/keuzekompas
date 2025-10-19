@@ -14,7 +14,7 @@ import { APP_PIPE } from '@nestjs/core';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
-    MongooseModule.forRoot(process.env.MONGODB_URI!),
+    MongooseModule.forRoot(process.env.MONGODB_URI),
     MongooseModule.forFeature([
       { name: ModuleModel.name, schema: ModuleSchema },
       { name: User.name, schema: UserSchema },
