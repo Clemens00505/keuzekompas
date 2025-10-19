@@ -57,38 +57,59 @@ jobs:
           echo "Contents of web-dist:" && ls -la web-dist
 
       - name: Create deployment archive (Next standalone if present)
+        id: package-web
+        shell: bash
         run: |
-          set -e
+          set -euo pipefail
           ROOT="$GITHUB_WORKSPACE"
           DEPLOY_DIR="web-dist"
-          # Next standalone server layout
-          if [ -f "$DEPLOY_DIR/standalone/server.js" ] || [ -f "$DEPLOY_DIR/.next/standalone/server.js" ]; then
-            echo "Using standalone server and bundling static assets"
-            TMP_DIR="$(mktemp -d)"
-            # Copy standalone server files to temp bundle
-            if [ -f "$DEPLOY_DIR/standalone/server.js" ]; then
-              rsync -a "$DEPLOY_DIR/standalone/" "$TMP_DIR/"
+          STANDALONE_DIR=""
+          if [ -d "$DEPLOY_DIR/.next/standalone" ]; then
+            STANDALONE_DIR="$DEPLOY_DIR/.next/standalone"
+          elif [ -d "$DEPLOY_DIR/standalone" ]; then
+            STANDALONE_DIR="$DEPLOY_DIR/standalone"
+          fi
+
+          SERVER_ENTRY=""
+          if [ -n "$STANDALONE_DIR" ]; then
+            # Common Next path
+            if [ -f "$STANDALONE_DIR/server.js" ]; then
+              SERVER_ENTRY="server.js"
+            elif [ -f "$STANDALONE_DIR/apps/web/server.js" ]; then
+              SERVER_ENTRY="apps/web/server.js"
             else
-              rsync -a "$DEPLOY_DIR/.next/standalone/" "$TMP_DIR/"
+              FOUND=$(find "$STANDALONE_DIR" -maxdepth 5 -type f -name server.js | head -n1 || true)
+              if [ -n "$FOUND" ]; then
+                SERVER_ENTRY="${FOUND#"$STANDALONE_DIR/"}"
+              fi
             fi
-            # Ensure .next/static exists and copy static assets
+          fi
+
+          if [ -n "$STANDALONE_DIR" ] && [ -n "$SERVER_ENTRY" ]; then
+            echo "Using standalone server at: $SERVER_ENTRY"
+            TMP_DIR="$(mktemp -d)"
+            # Copy standalone to tmp
+            cp -R "$STANDALONE_DIR/." "$TMP_DIR/"
+            # Static assets
             mkdir -p "$TMP_DIR/.next/static"
             if [ -d "$DEPLOY_DIR/.next/static" ]; then
-              rsync -a "$DEPLOY_DIR/.next/static/" "$TMP_DIR/.next/static/"
+              cp -R "$DEPLOY_DIR/.next/static/." "$TMP_DIR/.next/static/"
             fi
-            # Include public if present
+            # Public
             if [ -d "$DEPLOY_DIR/public" ]; then
-              rsync -a "$DEPLOY_DIR/public/" "$TMP_DIR/public/"
+              cp -R "$DEPLOY_DIR/public/." "$TMP_DIR/public/"
             fi
             pushd "$TMP_DIR" >/dev/null
             zip -r "$ROOT/web-dist.zip" .
             popd >/dev/null
             rm -rf "$TMP_DIR"
+            echo "server_entry=$SERVER_ENTRY" >> "$GITHUB_OUTPUT"
           else
-            echo "No standalone output found, zipping entire web-dist"
+            echo "No standalone output found; zipping entire web-dist (startup may fail)"
             pushd "$DEPLOY_DIR" >/dev/null
             zip -r "$ROOT/web-dist.zip" .
             popd >/dev/null
+            echo "server_entry=server.js" >> "$GITHUB_OUTPUT"
           fi
       
       - name: Login to Azure
@@ -107,7 +128,7 @@ jobs:
           slot-name: 'Production'
           package: web-dist.zip
           type: zip
-          startup-command: 'node server.js'
+          startup-command: 'node ${{ steps.package-web.outputs.server_entry }}'
 
       - name: 'Wait before retry'
         if: ${{ steps.deploy-to-webapp-1.outcome == 'failure' }}
@@ -122,5 +143,5 @@ jobs:
           slot-name: 'Production'
           package: web-dist.zip
           type: zip
-          startup-command: 'node server.js'
+          startup-command: 'node ${{ steps.package-web.outputs.server_entry }}'
           
