@@ -62,6 +62,6 @@ jobs:
         with:
           app-name: 'app-keuzekompas-api-prod'
           slot-name: 'Production'
-          package: dist/apps/api
+          package: api-dist
           startup-command: 'node main.js'
           
