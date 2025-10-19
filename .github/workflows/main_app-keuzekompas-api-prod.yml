@@ -89,10 +89,16 @@ jobs:
           inlineScript: |
             set -e
             APP_NAME="app-keuzekompas-api-prod"
-            RG=$(az webapp show -n "$APP_NAME" --query resourceGroup -o tsv)
+            RG=$(az webapp list --query "[?name=='$APP_NAME'] | [0].resourceGroup" -o tsv)
+            if [ -z "$RG" ]; then
+              echo "Could not determine resource group for $APP_NAME" >&2
+              exit 1
+            fi
             echo "Using resource group: $RG"
-            # Set Node stack to 20 LTS and startup command
-            az webapp config set -g "$RG" -n "$APP_NAME" --linux-fx-version "NODE|20-lts" --startup-file "node main.js"
+            # Set Node stack to 20 LTS
+            az webapp config set -g "$RG" -n "$APP_NAME" --linux-fx-version "NODE|20-lts"
+            # Set startup command
+            az webapp config set -g "$RG" -n "$APP_NAME" --startup-file "node main.js"
             # Also set Node version app setting for good measure
             az webapp config appsettings set -g "$RG" -n "$APP_NAME" --settings WEBSITE_NODE_DEFAULT_VERSION=20
 
