@@ -111,8 +111,8 @@ jobs:
               cp -R "$DEPLOY_DIR/public/." "$TMP_DIR/public/"
             fi
             # Root bootstrap to satisfy Oryx default startup (node server.js)
-            echo "Creating bootstrap server.js at zip root to launch $SERVER_ENTRY"
-            echo "require('child_process').fork(require('path').join(__dirname, '$SERVER_ENTRY'))" > "$TMP_DIR/server.js"
+            echo "Creating bootstrap server.js at zip root (robust multi-path require)"
+            echo "try{require('./$SERVER_ENTRY')}catch(e){try{require('./apps/web/server.js')}catch(e2){try{require('./.next/standalone/apps/web/server.js')}catch(e3){require('./.next/standalone/server.js')}}}" > "$TMP_DIR/server.js"
             pushd "$TMP_DIR" >/dev/null
             zip -r "$ROOT/web-dist.zip" .
             popd >/dev/null
@@ -121,10 +121,15 @@ jobs:
           else
             echo "No standalone output found; zipping entire web-dist (startup may fail)"
             pushd "$DEPLOY_DIR" >/dev/null
-            zip -r "$ROOT/web-dist.zip" .
+            # Create a bootstrap even in fallback to try common entrypoints
+            echo "try{require('./apps/web/server.js')}catch(e){try{require('./server.js')}catch(e2){try{require('./.next/standalone/apps/web/server.js')}catch(e3){require('./.next/standalone/server.js')}}}" > server.js
+            zip -r "$ROOT/web-dist.zip" . server.js
             popd >/dev/null
             echo "server_entry=server.js" >> "$GITHUB_OUTPUT"
           fi
+
+      - name: Show package contents (debug)
+        run: unzip -l web-dist.zip | sed -n '1,200p'
       
       - name: Login to Azure
         uses: azure/login@v2
